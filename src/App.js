@@ -49,23 +49,64 @@ class App extends Component{
     .then(data => console.log(data));
   }
 
+  // ORiginal
+
+  // calculateFaceLocation = (data) => {
+  //   const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+  //   // console.log(clarifaiFace)
+  //   const image = document.getElementById('inputImage');
+  //   const width = Number(image.width);
+  //   const height = Number(image.height);
+  //   return {
+  //     leftCol: clarifaiFace.left_col * width,
+  //     topRow: clarifaiFace.top_row * height,
+  //     rightCol: width - (clarifaiFace.right_col * width),
+  //     bottomRow: height - (clarifaiFace.bottom_row * height)
+  //   }
+  // }
+
+  // displayFaceBox = (box) => {
+  //   console.log(box);
+  //   this.setState({box: box})
+  // }
+
   calculateFaceLocation = (data) => {
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-    // console.log(clarifaiFace)
+    // console.log(data)
+    let clarifai =[]
+    for (let i=0; i< data.outputs[0].data.regions.length; i++) {
+      clarifai.push(data.outputs[0].data.regions[i])}
+
     const image = document.getElementById('inputImage');
     const width = Number(image.width);
     const height = Number(image.height);
-    return {
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - (clarifaiFace.right_col * width),
-      bottomRow: height - (clarifaiFace.bottom_row * height)
+
+    let boxes = []
+    for (let i=0; i< clarifai.length; i++) {
+      let clariface = clarifai[i].region_info.bounding_box
+      boxes.push({
+        leftCol: clariface.left_col * width,
+        topRow: clariface.top_row * height,
+        rightCol: width - (clariface.right_col * width),
+        bottomRow: height - (clariface.bottom_row * height)       
+      })
     }
+    return boxes
+
+    
+    // return { 
+    //   leftCol: clarifaiFace.left_col * width,
+    //   topRow: clarifaiFace.top_row * height,
+    //   rightCol: width - (clarifaiFace.right_col * width),
+    //   bottomRow: height - (clarifaiFace.bottom_row * height)
+    
+      
+    // }
   }
 
-  displayFaceBox = (box) => {
-    console.log(box);
-    this.setState({box: box})
+  displayFaceBox = (boxes) => {
+    // console.log(boxes);
+    this.setState({box: boxes})
+    // console.log(this.state.box)
   }
 
   onInputChange = (event) => {
@@ -84,7 +125,6 @@ class App extends Component{
       .then(response => response.json())
       .then(response => {
         if (typeof response === 'object') {
-          console.log(response);
           fetch('https://smart-brain-maugrim777.herokuapp.com/image', {
             'method': 'PUT',
             'headers': {'Content-Type': 'application/json'},
