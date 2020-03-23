@@ -23,6 +23,7 @@ const initialState = {
     name : '',
     email: '',
     entries: 0,
+    faces: 0,
     joined: ''
   }
 }
@@ -39,6 +40,7 @@ class App extends Component{
       name : data.name,
       email: data.email,
       entries: data.entries,
+      faces: data.faces,
       joined: data.joined
     }})
   }
@@ -49,29 +51,7 @@ class App extends Component{
     .then(data => console.log(data));
   }
 
-  // ORiginal
-
-  // calculateFaceLocation = (data) => {
-  //   const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-  //   // console.log(clarifaiFace)
-  //   const image = document.getElementById('inputImage');
-  //   const width = Number(image.width);
-  //   const height = Number(image.height);
-  //   return {
-  //     leftCol: clarifaiFace.left_col * width,
-  //     topRow: clarifaiFace.top_row * height,
-  //     rightCol: width - (clarifaiFace.right_col * width),
-  //     bottomRow: height - (clarifaiFace.bottom_row * height)
-  //   }
-  // }
-
-  // displayFaceBox = (box) => {
-  //   console.log(box);
-  //   this.setState({box: box})
-  // }
-
   calculateFaceLocation = (data) => {
-    // console.log(data)
     let clarifai =[]
     for (let i=0; i< data.outputs[0].data.regions.length; i++) {
       clarifai.push(data.outputs[0].data.regions[i])}
@@ -91,22 +71,24 @@ class App extends Component{
       })
     }
     return boxes
-
-    
-    // return { 
-    //   leftCol: clarifaiFace.left_col * width,
-    //   topRow: clarifaiFace.top_row * height,
-    //   rightCol: width - (clarifaiFace.right_col * width),
-    //   bottomRow: height - (clarifaiFace.bottom_row * height)
-    
-      
-    // }
   }
 
   displayFaceBox = (boxes) => {
-    // console.log(boxes);
     this.setState({box: boxes})
-    // console.log(this.state.box)
+    fetch('https://smart-brain-maugrim777.herokuapp.com/faces', {
+            'method': 'PUT',
+            'headers': {'Content-Type': 'application/json'},
+            'body': JSON.stringify({
+                id: this.state.user.id,
+                facesFound: boxes.length 
+            })
+          })
+          .then(response => response.json())
+          .then(count => {
+            this.setState(Object.assign(this.state.user, {faces: count}))
+          })
+          .catch(console.log)
+    console.log(this.state.user.faces)
   }
 
   onInputChange = (event) => {
@@ -138,7 +120,6 @@ class App extends Component{
           })
           .catch(console.log)
           this.displayFaceBox(this.calculateFaceLocation(response))
-          // document.getElementById('input').value = "please enter the picture URL"
         } else {
           console.log('Please submit an URL!')
         }
@@ -154,9 +135,7 @@ class App extends Component{
     } else if (route==='home') {
       this.setState({isSignedIn: true})
     }
-
     this.setState({route: route});
-
   } 
 
   render () {
@@ -170,7 +149,7 @@ class App extends Component{
         { route === 'home'
           ? <div>
               <Logo />
-              <Rank name={this.state.user.name} entries={this.state.user.entries} />
+              <Rank name={this.state.user.name} entries={this.state.user.entries} faces={this.state.user.faces} />
               <ImageLinkForm 
                 onInputChange={this.onInputChange} 
                 onButtonSubmit={this.onButtonSubmit}
