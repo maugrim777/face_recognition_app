@@ -37,6 +37,17 @@ class Register extends React.Component  {
             if (user.id) {
                 this.props.loadUser(user);
                 this.props.onRouteChange('home')
+
+                // insert SendGrid register email
+                fetch('https://smart-brain-maugrim777.herokuapp.com/sendMail', {
+                    'method': 'POST',
+                    'headers': {'Content-Type': 'application/json'},
+                    'body': JSON.stringify({
+                        name: this.state.name,
+                        email: this.state.email,
+                    })
+                }).then(response => response.json()).then(data => console.log(data)).catch(err => console.log(err))
+
             }
         })
         
