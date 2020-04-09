@@ -7,6 +7,7 @@ import Rank from './components/Rank/Rank';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import SignIn from './components/SignIn/SignIn';
 import Register from './components/Register/Register';
+import RecoverPassword from './components/RecoverPassword/RecoverPassword'
 import './App.css';
 import particlesOptions from './particlesOptions.json'
 import 'tachyons';
@@ -159,7 +160,9 @@ class App extends Component{
           : (
             route === 'register'
             ? <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
-            : <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
+            : route=== 'recoverPassword' 
+            ?<RecoverPassword loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
+            :<SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
             )
            
         }
