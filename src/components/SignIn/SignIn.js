@@ -35,7 +35,6 @@ class SignIn extends React.Component {
         })
     }
 
-
     render() {
         const { onRouteChange } = this.props;
         return (
@@ -73,6 +72,9 @@ class SignIn extends React.Component {
                         </div>
                         <div className="lh-copy mt3">
                             <p onClick={() => onRouteChange('register')} className="f6 link dim black db pointer">Register</p>
+                        </div>
+                        <div className="lh-copy mt3">
+                            <p onClick={() => onRouteChange('recoverPassword')} className="f6 link dim navy db pointer">Forgot Password? Click Here!</p>
                         </div>
                     </div>
                 </main>
